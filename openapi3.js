@@ -78,6 +78,7 @@ function fakeProdCons(data) {
     data.consumes = [];
     data.bodyParameter = {};
     data.bodyParameter.exampleValues = {};
+    data.bodyParameter.requiredExampleValues = {};
     for (var r in data.operation.responses) {
         var response = data.operation.responses[r];
         for (var prod in response.content) {
@@ -108,6 +109,29 @@ function fakeProdCons(data) {
                 }
                 else {
                     data.bodyParameter.exampleValues.json = data.bodyParameter.exampleValues.object;
+                }
+            }
+			if (!data.bodyParameter.requiredExampleValues.object) {
+                data.bodyParameter.present = true;
+                data.bodyParameter.contentType = rb;
+                if (op.requestBody["x-widdershins-oldRef"]) {
+                    data.bodyParameter.refName = op.requestBody["x-widdershins-oldRef"].replace('#/components/requestBodies/','');
+                }
+                data.bodyParameter.schema = op.requestBody.content[rb].schema;
+                if (op.requestBody.content[rb].required && op.requestBody.content[rb].examples) {
+                    let key = Object.keys(op.requestBody.content[rb].examples)[0];
+                    data.bodyParameter.requiredExampleValues.object = op.requestBody.content[rb].examples[key].value;
+                    data.bodyParameter.requiredExampleValues.description = op.requestBody.content[rb].examples[key].description;
+                }
+                else {
+					data.bodyParameter.requiredExampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{skipReadOnly:true},data.api);
+					
+                }
+                if (typeof data.bodyParameter.requiredExampleValues.object === 'object') {
+                    data.bodyParameter.requiredExampleValues.json = safejson(data.bodyParameter.requiredExampleValues.object,null,2);
+                }
+                else {
+                    data.bodyParameter.requiredExampleValues.json = data.bodyParameter.requiredExampleValues.object;
                 }
             }
         }
@@ -558,7 +582,7 @@ function getAuthenticationStr(data) {
 function convertInner(api, options, callback) {
     let defaults = {};
     defaults.title = 'API';
-    defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go' }];
+    defaults.language_tabs = [{ 'python': 'Python' }, { 'java': 'Java' }, { 'csharp': 'C#' }];
     defaults.toc_footers = [];
     defaults.includes = [];
     defaults.search = true;
@@ -591,6 +615,7 @@ function convertInner(api, options, callback) {
     }
     data.translations = {};
     templates.translations(data);
+	data.translations.defaultTag = "^^^Test^^^";
 
     data.version = (data.api.info && data.api.info.version && data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
@@ -611,6 +636,7 @@ function convertInner(api, options, callback) {
     data.options = options;
     data.header = header;
     data.title_prefix = (data.api.info && data.api.info.version ? (data.api.info.title.trim()||'API').split(' ').join('-') : '');
+	data.translations.defaultTag = data.title_prefix;
     data.templates = templates;
     data.resources = convertToToc(api,data);
 
@@ -652,7 +678,7 @@ function convertInner(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
-    let content = '---\n'+yaml.dump(header)+'\n---\n\n';
+    let content = '';//'---\n'+yaml.dump(header)+'\n---\n\n';
         data = options.templateCallback('main', 'pre', data);
         if (data.append) { content += data.append; delete data.append; }
     try {

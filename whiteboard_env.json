@@ -1,3 +1,4 @@
-{
-  "language_tabs": ["shell","http","html","javascript","python","ruby","java","go"]
+{ 
+  "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "verbose": true
 }

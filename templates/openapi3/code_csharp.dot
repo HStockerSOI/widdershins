@@ -1,0 +1,34 @@
+using(HttpClient client = new HttpClient())
+{
+	// Add an Accept header for JSON format.
+	client.DefaultRequestHeaders.Accept.Add(
+	new MediaTypeWithQualityHeaderValue("application/json"));
+	
+	Dictionary<string, string> parameters = new Dictionary<string,string>()
+	{
+	{{~ data.requiredParameters :p:index}}    {"{{=p.name}}", "{{=p.exampleValues.json.replace(/'/g,"")}}"}{{? data.requiredParameters.length-1 != index }},{{?}}{{~}}
+	}
+	var encodedContent = new FormUrlEncodedContent(parameters);
+
+{{ data.methodCamel = data.method.verb.charAt(0).toUpperCase() + data.method.verb.slice(1); }}
+
+	// List data response.
+	HttpResponseMessage response = client.{{=data.methodCamel}}Async("{{=data.url}}", encodedContent).Result;  // Blocking call! Program will wait here until a response is received or a timeout occurs.
+	if (response.IsSuccessStatusCode)
+	{
+		// Parse the response body.
+		var dataObjects = response.Content.ReadAsAsync<IEnumerable<DataObject>>().Result;  //Make sure to add a reference to System.Net.Http.Formatting.dll
+		foreach (var d in dataObjects)
+		{
+			Console.WriteLine("{0}", d.Name);
+		}
+	}
+	else
+	{
+		Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+	}
+
+	//Make any other calls using HttpClient here.
+
+	//HttpClient will automatically be disposed of at the conclusion of the using block
+}

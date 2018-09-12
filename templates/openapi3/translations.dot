@@ -1,5 +1,5 @@
 {{
-data.translations.defaultTag = 'Default';
+data.translations.defaultTag = 'TEST';
 data.translations.response = 'Response';
 data.translations.responseDefault = 'Default';
 data.translations.responseUnknown = 'Unknown';
