@@ -1,7 +1,3 @@
-{{? data.operation.operationId}}
-<a id="opId{{=data.operation.operationId}}"></a>
-{{?}}
-
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
 {{ data.parameters = data.operation.parameters; }}
@@ -13,18 +9,40 @@
 
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-getting-started">Getting Started</h2>
 
-{{? data.operation.description}}{{= data.operation.description }}{{?}}
+```python
+from requests import {{=data.method.verb}}
+from json import dumps
+
+url = "{{=data.url}}"
+```
+
+{{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
 
 | Method | URL |
 |---|---|
 |{{=data.methodUpper }} | {{=data.url }} |
 
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data">Staging Data</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data">Staging The Data</h2>
+```python
+{{~ data.requiredParameters :p:index}}{{=p.name}} = {{=p.exampleValues.json}}
+{{~}}
+
+params = {
+{{~ data.requiredParameters :p:index}}  "{{=p.name}}": {{=p.name}}{{? data.requiredParameters.length-1 != index }},{{?}}
+{{~}}}
+```
+<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
+
+{{~ data.parameters :p:pindex}}{{?p.in == "query"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}  The data should be passed in to the [parameters](#query-parameters) of the request.
+
+<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-body">Body</h3>
+
+{{~ data.parameters :p:pindex}}{{?p.in == "body"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}    The data should be passed in to the [request body](#request-body) of the request.
 
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-api-definition"> {{=data.methodUpper}} {{=data.method.path}}</h2>
 
-
+{{? data.operation.description}}{{= data.operation.description.split("<definition>")[1].split("</definition>")[0] }}{{?}}
 
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-making-request">Making The Request</h2>
 
@@ -36,15 +54,6 @@
 
 `{{= data.methodUpper}} {{=data.method.path}}`
 
-{{? data.operation.requestBody}}
-> Body parameter
-
-{{? data.bodyParameter.exampleValues.description }}
-> {{= data.bodyParameter.exampleValues.description }}
-{{?}}
-
-{{= data.utils.getBodyParameterExamples(data) }}
-{{?}}
 
 {{? data.parameters && data.parameters.length }}
 {{#def.parameters}}
@@ -60,3 +69,12 @@
 {{??}}
 {{#def.authentication_none}}
 {{?}}
+
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-next-step">Next Steps</h2>
+
+```python
+{{~ data.requiredParameters :p:index}}{{=p.name}} = response[{{=p.name}}]
+{{~}}
+```
+
+{{? data.operation.description}}{{= data.operation.description.split("<nextSteps>")[1].split("</nextSteps>")[0] }}{{?}}

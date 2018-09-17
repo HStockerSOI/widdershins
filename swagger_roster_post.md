@@ -10,6 +10,8 @@ A PO can add one or more providers to the roster by submitting a call to the fol
 |---|---|
 |POST | https://proview-demo.caqh.org/RosterAPI/api/Roster |
 
+<h2 id="CAQH-ProView-RosterAPI-Roster-staging-data">Staging Data</h2>
+
 <h2 id="CAQH-ProView-RosterAPI-Roster-api-definition"> POST /Roster</h2>
 
 <h2 id="CAQH-ProView-RosterAPI-Roster-making-request">Making The Request</h2>
@@ -36,7 +38,7 @@ data = {
  "Provider_Address_State": "string",
  "Provider_Address_Zip": "0",
  "Provider_Practice_State": "string",
- "Provider_Birthdate": "2018-09-11",
+ "Provider_Birthdate": "2018-09-12",
  "Provider_Type": "string",
  "Provider_NPI*": "0",
  "Organization_ID": "0"
@@ -75,11 +77,11 @@ using(HttpClient client = new HttpClient())
 	client.DefaultRequestHeaders.Accept.Add(
 	new MediaTypeWithQualityHeaderValue("application/json"));
 	
-	Dictionary<string, string> params = new Dictionary<string,string>()
+	Dictionary<string, string> parameters = new Dictionary<string,string>()
 	{
 	    {"product", "PV"}
 	}
-	var encodedContent = new FormUrlEncodedContent(params);
+	var encodedContent = new FormUrlEncodedContent(parameters);
 
 	// List data response.
 	HttpResponseMessage response = client.PostAsync("https://proview-demo.caqh.org/RosterAPI/api/Roster", encodedContent).Result;  // Blocking call! Program will wait here until a response is received or a timeout occurs.
@@ -124,7 +126,7 @@ using(HttpClient client = new HttpClient())
   "Provider_Fax": "string",
   "Provider_Email": "string",
   "Provider_Practice_State": "string",
-  "Provider_Birthdate": "2018-09-11",
+  "Provider_Birthdate": "2018-09-12",
   "Provider_SSN*": "string",
   "Provider_Short_SSN": "string",
   "Provider_DEA*": "string",
@@ -135,8 +137,8 @@ using(HttpClient client = new HttpClient())
   "Provider_License_State": "string",
   "Provider_License_Number": 0,
   "PO_Provider_ID": 0,
-  "Last_Recredential_Date": "2018-09-11",
-  "Next_Recredential_Date": "2018-09-11",
+  "Last_Recredential_Date": "2018-09-12",
+  "Next_Recredential_Date": "2018-09-12",
   "Delegation_Flag": "string",
   "Application_Type": "string",
   "Affiliation_Flag": "string",
@@ -204,7 +206,7 @@ Authorization
   "Provider_Fax": "string",
   "Provider_Email": "string",
   "Provider_Practice_State": "string",
-  "Provider_Birthdate": "2018-09-11",
+  "Provider_Birthdate": "2018-09-12",
   "Provider_SSN*": "string",
   "Provider_Short_SSN": "string",
   "Provider_DEA*": "string",
@@ -215,8 +217,8 @@ Authorization
   "Provider_License_State": "string",
   "Provider_License_Number": 0,
   "PO_Provider_ID": 0,
-  "Last_Recredential_Date": "2018-09-11",
-  "Next_Recredential_Date": "2018-09-11",
+  "Last_Recredential_Date": "2018-09-12",
+  "Next_Recredential_Date": "2018-09-12",
   "Delegation_Flag": "string",
   "Application_Type": "string",
   "Affiliation_Flag": "string",

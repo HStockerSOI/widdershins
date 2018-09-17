@@ -1,4 +1,5 @@
 from requests import {{=data.method.verb}}
+from json import dumps
 
 {{?data.allHeaders.length}}headers = {
 {{~data.allHeaders :p:index}}  "{{=p.name}}": {{=p.exampleValues.json}}{{?index < data.allHeaders.length-1}},{{?}}
@@ -9,16 +10,11 @@ params = {
 {{~ data.requiredParameters :p:index}}  "{{=p.name}}": {{=p.exampleValues.json}}{{? data.requiredParameters.length-1 != index }},{{?}}
 {{~}}}
 
-{{data.bodyParameter.SchemaName = data.bodyParameter.schema["x-widdershins-oldRef"].split("/").slice(-1)[0];}}
-{{var schema = data.utils.schemaToArray(data.api.components.schemas[data.bodyParameter.SchemaName],-1,{trim:true,join:true},data)[0];}}
-data = {
-{{~ schema.rows.filter(x => x.required) :p:index}} "{{=p.name}}": "{{=data.bodyParameter.requiredExampleValues.object[p.name]}}"{{? schema.rows.filter(x => x.required).length-1 != index }},{{?}}
-{{~}}}
-
+data = {{=data.bodyParameter.exampleValues.json}}
 
 username = "yourUsername"
 password = "yourPassword"
 
-r = {{=data.method.verb}}("{{=data.url}}", params = params, data = data, headers = headers, auth = (username, password))
+response = {{=data.method.verb}}("{{=data.url}}", params = params, data = dumps(data), headers = headers, auth = (username, password))
 
-print(r.json())
+print(response.json())
