@@ -4,13 +4,28 @@
 {{ if (response.content) data.responseSchemas = true; }}
 {{~}}
 
-{{? data.responseSchemas }}
+{{? data.responseSchemas}}
 > Example responses
 
-{{= data.utils.getResponseExamples(data) }}
+>200 Response
+
+```json
+{
+	'batch_id':'string'
+}
+```
+
+>400 and 401 Response
+
+```json
+{
+	'Message':'error'
+}
+```
 {{?}}
 
-<h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
+{{? data.operation.description}}{{= data.operation.description.split("<responses>")[1].split("</responses>")[0] }}{{?}}
+
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -81,3 +96,5 @@ Status Code **{{=response.status}}**
 {{~}}
 
 {{?}}
+
+

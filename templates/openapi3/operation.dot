@@ -24,6 +24,11 @@ url = "{{=data.url}}"
 
 
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data">Staging The Data</h2>
+
+> Create parameters object
+
+  If you are storing this data in a database and are unsure about how best to retrieve and parse it, please refer to the [data loading and parsing](#loading-and-parsing-data) section.
+
 ```python
 {{~ data.requiredParameters :p:index}}{{=p.name}} = {{=p.exampleValues.json}}
 {{~}}
@@ -47,7 +52,7 @@ params = {
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-making-request">Making The Request</h2>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
-> Code samples
+> Full API Request
 
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
@@ -58,6 +63,8 @@ params = {
 {{? data.parameters && data.parameters.length }}
 {{#def.parameters}}
 {{?}}
+
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-responses">Responses</h2>
 
 {{#def.responses}}
 
@@ -72,8 +79,13 @@ params = {
 
 <h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-next-step">Next Steps</h2>
 
+> Parsing the response
+
 ```python
-{{~ data.requiredParameters :p:index}}{{=p.name}} = response[{{=p.name}}]
+{{~ data.responses :r}}
+{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = ""{{~}}
+if(response.status_Code == {{=r.status}}):
+	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = response.json()["{{=p}}"]{{~}}
 {{~}}
 ```
 
