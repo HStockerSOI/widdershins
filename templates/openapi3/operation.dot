@@ -16,6 +16,12 @@ from json import dumps
 url = "{{=data.url}}"
 ```
 
+``` csharp
+using using System.Net.Http;
+
+string url = "{{=data.url}}"
+```
+
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
 
 | Method | URL |
