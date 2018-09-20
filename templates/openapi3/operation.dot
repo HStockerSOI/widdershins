@@ -17,9 +17,17 @@ url = "{{=data.url}}"
 ```
 
 ``` csharp
-using using System.Net.Http;
+//includes
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-string url = "{{=data.url}}"
+
+//url contains paramaters since we are sending the body content in POST call
+string url = "https://proview-demo.caqh.org/RosterAPI/api/Roster?{{~ data.requiredParameters :p:index}}{{=p.name}}={{=p.exampleValues.json.replace(/'/g,"")}}{{? index != data.requiredParameters.length-1}}&{{?}}{{~}}";
 ```
 
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
@@ -45,9 +53,7 @@ params = {
 ```
 
 ```csharp
-Dictionary<string, string> parameters = new Dictionary<string, string> {
-	{{~ data.requiredParameters :p:index}}{"{{=p.name}}" = "{{=p.exampleValues.json.replace(/'/g, '')}}{{~}}"}
-};
+//Because we are sending a POST body, the URL params should be placed directly in the URL string (shown above)
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
 
