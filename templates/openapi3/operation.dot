@@ -16,6 +16,12 @@ from json import dumps
 url = "{{=data.url}}"
 ```
 
+``` csharp
+using using System.Net.Http;
+
+string url = "{{=data.url}}"
+```
+
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
 
 | Method | URL |
@@ -36,6 +42,12 @@ url = "{{=data.url}}"
 params = {
 {{~ data.requiredParameters :p:index}}  "{{=p.name}}": {{=p.name}}{{? data.requiredParameters.length-1 != index }},{{?}}
 {{~}}}
+```
+
+```csharp
+Dictionary<string, string> parameters = new Dictionary<string, string> {
+	{{~ data.requiredParameters :p:index}}{"{{=p.name}}" = "{{=p.exampleValues.json.replace(/'/g, '')}}{{~}}"}
+};
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
 
