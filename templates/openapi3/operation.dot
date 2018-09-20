@@ -43,6 +43,12 @@ params = {
 {{~ data.requiredParameters :p:index}}  "{{=p.name}}": {{=p.name}}{{? data.requiredParameters.length-1 != index }},{{?}}
 {{~}}}
 ```
+
+```csharp
+Dictionary<string, string> parameters = new Dictionary<string, string> {
+	{{~ data.requiredParameters :p:index}}{"{{=p.name}}" = "{{=p.exampleValues.json.replace(/'/g, '')}}{{~}}"}
+};
+```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
 
 {{~ data.parameters :p:pindex}}{{?p.in == "query"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}  The data should be passed in to the [parameters](#query-parameters) of the request.
