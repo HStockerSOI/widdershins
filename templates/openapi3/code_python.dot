@@ -10,11 +10,12 @@ params = {
 {{~ data.requiredParameters :p:index}}  "{{=p.name}}": {{=p.exampleValues.json}}{{? data.requiredParameters.length-1 != index }},{{?}}
 {{~}}}
 
+{{?data.bodyParameter.exampleValues.json}}
 data = {{=data.bodyParameter.exampleValues.json}}
-
+{{?}}
 username = "yourUsername"
 password = "yourPassword"
 
-response = {{=data.method.verb}}("{{=data.url}}", params = params, data = dumps(data), headers = headers, auth = (username, password))
+response = {{=data.method.verb}}("{{=data.url}}", params = params, {{?data.bodyParameter.exampleValues.json}}data = dumps(data), {{?}}headers = headers, auth = (username, password))
 
 print(response.json())

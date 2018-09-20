@@ -1,6 +1,30 @@
 {
   "paths": {
     "/Roster": {
+      "get": {
+        "summary": "Get Roster Result [GET]",
+        "description": "<introduction>A PO can request the status and results of a previous Add to Roster, Update on Roster, or Delete from Roster request by submitting the system-generated Batch ID in the following URL.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses></responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
+        "responses": {
+          "200": {
+            "description": "A successful response will return a provider object.",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ResultResponse"
+            },
+            "x-oad-type": "response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "query",
+            "description": "The batch id from a previous create, update or delete request.",
+            "required": true,
+            "type": "string",
+            "x-oad-type": "parameter"
+          }
+        ]
+      },
       "post": {
         "operationId": "roster-post-add",
         "summary": "Add Roster Request [POST]",
@@ -312,6 +336,14 @@
             "x-oad-type": "string",
             "type": "string",
             "default": "Optional"
+          },
+          "anniversary_date": {
+            "x-oad-type": "string",
+            "type": "string"
+          },
+          "exception_description": {
+            "x-oad-type": "string",
+            "type": "string"
           }
         }
       }
@@ -333,6 +365,24 @@
         "Message": {
           "x-oad-type": "string",
           "type": "string"
+        }
+      }
+    },
+    "ResultResponse": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "batch_status": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "batch_time": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "roster_result": {
+          "x-oad-type": "reference",
+          "$ref": "#/definitions/AddRequest"
         }
       }
     }
