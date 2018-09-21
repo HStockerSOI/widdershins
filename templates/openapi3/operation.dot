@@ -19,15 +19,16 @@ url = "{{=data.url}}"
 ``` csharp
 //includes
 using System;
-using System.Net.Http;
 using System.Text;
+using System.Web;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
-//url contains paramaters since we are sending the body content in POST call
-string url = "https://proview-demo.caqh.org/RosterAPI/api/Roster?{{~ data.requiredParameters :p:index}}{{=p.name}}={{=p.exampleValues.json.replace(/'/g,"")}}{{? index != data.requiredParameters.length-1}}&{{?}}{{~}}";
+//base url
+string url = "{{=data.url + '?'}}";
 ```
 
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
@@ -53,7 +54,10 @@ params = {
 ```
 
 ```csharp
-//Because we are sending a POST body, the URL params should be placed directly in the URL string (shown above)
+//setup query parameters
+var queryString = HttpUtility.ParseQueryString(string.Empty);
+{{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
+url += queryString.ToString();
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
 
@@ -106,6 +110,19 @@ params = {
 if(response.status_Code == {{=r.status}}):
 	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = response.json()["{{=p}}"]
 	{{~}}
+{{~}}
+```
+
+```csharp
+{{~ data.responses :r}}
+{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}string {{=p}} = "";
+{{~}}
+if ((int)result.StatusCode == {{=r.status}})
+{
+	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = responseObj.{{=p}};
+	{{~}}
+}
+
 {{~}}
 ```
 
