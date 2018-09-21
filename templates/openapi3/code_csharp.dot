@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 string url = "https://proview-demo.caqh.org/RosterAPI/api/Roster?{{~ data.requiredParameters :p:index}}{{=p.name}}={{=p.exampleValues.json.replace(/'/g,"")}}{{? index != data.requiredParameters.length-1}}&{{?}}{{~}}";
 
 //HTTPClient should be instantiated once and re-used in your application
-HttpClient client = new HttpClient()
+HttpClient client = new HttpClient();
 
 //set up HTTP auth (replace username/password with yours)
 var byteArray = Encoding.ASCII.GetBytes("username:password");
