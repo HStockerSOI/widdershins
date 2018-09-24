@@ -3,7 +3,7 @@
     "/Roster": {
       "get": {
         "summary": "Get Roster Result [GET]",
-        "description": "<introduction>A PO can request the status and results of a previous Add to Roster, Update on Roster, or Delete from Roster request by submitting the system-generated Batch ID in the following URL.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses></responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
+        "description": "<introduction>A PO can request the status and results of a previous Add to Roster, Update on Roster, or Delete from Roster request by submitting the system-generated Batch ID in the following URL.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses>\n### Update Response\n\n### Add Response\n\n### Delete Response\n</responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
         "responses": {
           "200": {
             "description": "A successful response will return a provider object.",
@@ -21,6 +21,33 @@
             "description": "The batch id from a previous create, update or delete request.",
             "required": true,
             "type": "string",
+            "x-oad-type": "parameter"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update Roster Request [PUT]",
+        "description": "<introduction>A PO can update one or more providers on the roster by submitting a call to the following URL. At least one of the fields with an asterisk (*) is required to process an Update. See 2.1.2 for the immediate system response.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses></responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "x-oad-type": "response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "x-oad-type": "array",
+              "type": "array",
+              "items": {
+                "x-oad-type": "reference",
+                "$ref": "#/definitions/RosterUpdate"
+              }
+            },
+            "collectionFormat": "csv",
             "x-oad-type": "parameter"
           }
         ]
@@ -284,6 +311,7 @@
     "AddRequest": {
       "x-oad-type": "array",
       "type": "array",
+      "title": "Roster Insert Request",
       "items": {
         "x-oad-type": "object",
         "type": "object",
@@ -348,19 +376,21 @@
         }
       }
     },
-    "AddResponse": {
+    "RosterResponse": {
       "x-oad-type": "object",
       "type": "object",
+      "title": "Roster OperationResponse",
       "properties": {
-        "batch_id": {
+        "batch_Id": {
           "x-oad-type": "string",
           "type": "string"
         }
       }
     },
-    "AddErrorResponse": {
+    "RosterErrorReponse": {
       "x-oad-type": "object",
       "type": "object",
+      "title": "Roster Error Reponse",
       "properties": {
         "Message": {
           "x-oad-type": "string",
@@ -371,6 +401,7 @@
     "ResultResponse": {
       "x-oad-type": "object",
       "type": "object",
+      "title": "Roster Result Response",
       "properties": {
         "batch_status": {
           "x-oad-type": "string",
@@ -383,6 +414,45 @@
         "roster_result": {
           "x-oad-type": "reference",
           "$ref": "#/definitions/AddRequest"
+        }
+      }
+    },
+    "RosterUpdate": {
+      "x-oad-type": "object",
+      "type": "object",
+      "title": "Update Roster Request",
+      "properties": {
+        "organization_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "caqh_provider_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "po_provider_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "last_recredential_date": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "next_recredential_date": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "delegation_flag": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "application_type": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "affiliation_flag": {
+          "x-oad-type": "string",
+          "type": "string"
         }
       }
     }

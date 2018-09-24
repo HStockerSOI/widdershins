@@ -7,12 +7,12 @@
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-getting-started">Getting Started</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper+data.methodUpper}}-getting-started">Getting Started</h2>
 
 ```python
 from requests import {{=data.method.verb}}
-from json import dumps
-
+{{?data.bodyParameter.exampleValues.json}}from json import dumps
+{{?}}
 url = "{{=data.url}}"
 ```
 
@@ -29,7 +29,7 @@ string url = "{{=data.url}}"
 |{{=data.methodUpper }} | {{=data.url }} |
 
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data">Staging The Data</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data">Staging The Data</h2>
 
 > Create parameters object
 
@@ -49,19 +49,20 @@ Dictionary<string, string> parameters = new Dictionary<string, string> {
 	{{~ data.requiredParameters :p:index}}{"{{=p.name}}" = "{{=p.exampleValues.json.replace(/'/g, '')}}{{~}}"}
 };
 ```
-<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-parameter">Parameters</h3>
+<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
 
 {{~ data.parameters :p:pindex}}{{?p.in == "query"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}  The data should be passed in to the [parameters](#query-parameters) of the request.
 
-<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-staging-data-body">Body</h3>
+{{?data.bodyParameter.exampleValues.json}}
+<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-body">Body</h3>
 
-{{~ data.parameters :p:pindex}}{{?p.in == "body"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}    The data should be passed in to the [request body](#request-body) of the request.
+{{~ data.parameters :p:pindex}}{{?p.in == "body"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}    The data should be passed in to the [request body](#request-body) of the request.{{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-api-definition"> {{=data.methodUpper}} {{=data.method.path}}</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-api-definition"> {{=data.methodUpper}} {{=data.method.path}}</h2>
 
 {{? data.operation.description}}{{= data.operation.description.split("<definition>")[1].split("</definition>")[0] }}{{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-making-request">Making The Request</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-making-request">Making The Request</h2>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
 > Full API Request
@@ -76,7 +77,7 @@ Dictionary<string, string> parameters = new Dictionary<string, string> {
 {{#def.parameters}}
 {{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-responses">Responses</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-responses">Responses</h2>
 
 {{#def.responses}}
 
@@ -89,7 +90,7 @@ Dictionary<string, string> parameters = new Dictionary<string, string> {
 {{#def.authentication_none}}
 {{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")}}-next-step">Next Steps</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-next-step">Next Steps</h2>
 
 > Parsing the response
 

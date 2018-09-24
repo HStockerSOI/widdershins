@@ -1,5 +1,5 @@
 from requests import {{=data.method.verb}}
-from json import dumps
+{{?data.bodyParameter.exampleValues.json}}from json import dumps{{?}}
 
 {{?data.allHeaders.length}}headers = {
 {{~data.allHeaders :p:index}}  "{{=p.name}}": {{=p.exampleValues.json}}{{?index < data.allHeaders.length-1}},{{?}}

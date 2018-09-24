@@ -4,14 +4,14 @@
 |---|---|---|---|
 {{~ data.parameters :p}}{{? p.in == "query"}}|{{=p.name}}|{{=p.in}}|{{=p.safeType}}|{{=p.required}}|{{=p.shortDesc || 'none'}}|
 {{?}}{{~}}
-
+{{?data.bodyParameter.exampleValues.json}}
 <h3 id="{{=data.operationUniqueSlug}}-body">Body</h3>
 
 |Parameter|Type|Required|Description|
 |---|---|---|---|
 {{~ data.parameters :p}}{{? p.in == "body"}}| {{=p.name}} | {{=p.safeType}} | {{=p.required}} | {{=p.shortDesc || 'none'}} |
 {{?}}{{~}}
-
+{{?}}
 {{? data.longDescs }}
 #### Detailed descriptions
 {{~ data.parameters :p}}{{? p.shortDesc !== p.description}}
