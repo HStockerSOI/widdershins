@@ -1,34 +1,83 @@
-using(HttpClient client = new HttpClient())
-{
-	// Add an Accept header for JSON format.
-	client.DefaultRequestHeaders.Accept.Add(
-	new MediaTypeWithQualityHeaderValue("application/json"));
-	
-	Dictionary<string, string> parameters = new Dictionary<string,string>()
-	{
-	{{~ data.requiredParameters :p:index}}    {"{{=p.name}}", "{{=p.exampleValues.json.replace(/'/g,"")}}"}{{? data.requiredParameters.length-1 != index }},{{?}}{{~}}
-	}
-	var encodedContent = new FormUrlEncodedContent(parameters);
+//includes
+using System;
+using System.Text;
+using System.Web;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 {{ data.methodCamel = data.method.verb.charAt(0).toUpperCase() + data.method.verb.slice(1); }}
+//HTTPClient should be instantiated once and re-used in your application
+HttpClient client = new HttpClient();
 
-	// List data response.
-	HttpResponseMessage response = client.{{=data.methodCamel}}Async("{{=data.url}}", encodedContent).Result;  // Blocking call! Program will wait here until a response is received or a timeout occurs.
-	if (response.IsSuccessStatusCode)
-	{
-		// Parse the response body.
-		var dataObjects = response.Content.ReadAsAsync<IEnumerable<DataObject>>().Result;  //Make sure to add a reference to System.Net.Http.Formatting.dll
-		foreach (var d in dataObjects)
-		{
-			Console.WriteLine("{0}", d.Name);
-		}
-	}
-	else
-	{
-		Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-	}
+//base url
+string url = "{{=data.url + '?'}}";
 
-	//Make any other calls using HttpClient here.
+//setup query parameters
+var queryString = HttpUtility.ParseQueryString(string.Empty);
+{{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
+//add parameters to base url
+url += queryString.ToString();
 
-	//HttpClient will automatically be disposed of at the conclusion of the using block
-}
+//set up HTTP auth (replace username/password with yours)
+var byteArray = Encoding.ASCII.GetBytes("username:password");
+client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+{{? data.method.verb == "post"}}
+
+//Build POST body (you can also load in external json files as a string, this is to build one on the fly)
+JObject body = new JObject(
+new JProperty("provider", new JObject(
+    new JProperty("first_name", ""),
+    new JProperty("middle_name", ""),
+    new JProperty("last_name", ""),
+    new JProperty("name_suffix", ""),
+    new JProperty("gender", ""),
+    new JProperty("address1", ""),
+    new JProperty("address2", ""),
+    new JProperty("city", ""),
+    new JProperty("state", ""),
+    new JProperty("zip", ""),
+    new JProperty("zip_extn", ""),
+    new JProperty("phone", ""),
+    new JProperty("fax", ""),
+    new JProperty("email", ""),
+    new JProperty("practice_state", ""),
+    new JProperty("birthdate", ""),
+    new JProperty("ssn", ""),
+    new JProperty("short_ssn", ""),
+    new JProperty("dea", ""),
+    new JProperty("upin", ""),
+    new JProperty("type", ""),
+    new JProperty("tax_id", ""),
+    new JProperty("npi", ""),
+    new JProperty("license_state", ""),
+    new JProperty("license_number", ""))),
+new JProperty("caqh_provider_id", ""),
+new JProperty("po_provider_id", ""),
+new JProperty("last_recredential_date", ""),
+new JProperty("next_recredential_date", ""),
+new JProperty("delegation_flag", ""),
+new JProperty("application_type", ""),
+new JProperty("affiliation_flag", ""),
+new JProperty("organization_id", ""),
+new JProperty("region_id", ""));
+//Body is taken as an array, even with only one element
+JArray bodyArray = new JArray(body);
+var content = new StringContent(bodyArray.ToString(), Encoding.UTF8, "application/json");
+content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+//Send the POST Request
+var result = client.{{=data.methodCamel}}Async(url, content).Result;
+
+{{?? data.method.verb == "get"}}
+//Send the GET Request
+var result = client.{{=data.methodCamel}}Async(url).Result;
+
+{{?}}
+
+//get the response message and parse it
+string resultTxt = result.Content.ReadAsStringAsync().Result;
+dynamic responseObj = JsonConvert.DeserializeObject<dynamic>(resultTxt);
+Console.WriteLine(responseObj.ToString());

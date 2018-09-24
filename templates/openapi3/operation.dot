@@ -17,9 +17,18 @@ url = "{{=data.url}}"
 ```
 
 ``` csharp
-using using System.Net.Http;
+//includes
+using System;
+using System.Text;
+using System.Web;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-string url = "{{=data.url}}"
+
+//base url
+string url = "{{=data.url + '?'}}";
 ```
 
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
@@ -45,9 +54,10 @@ params = {
 ```
 
 ```csharp
-Dictionary<string, string> parameters = new Dictionary<string, string> {
-	{{~ data.requiredParameters :p:index}}{"{{=p.name}}" = "{{=p.exampleValues.json.replace(/'/g, '')}}{{~}}"}
-};
+//setup query parameters
+var queryString = HttpUtility.ParseQueryString(string.Empty);
+{{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
+url += queryString.ToString();
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
 
@@ -101,6 +111,19 @@ Dictionary<string, string> parameters = new Dictionary<string, string> {
 if(response.status_Code == {{=r.status}}):
 	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = response.json()["{{=p}}"]
 	{{~}}
+{{~}}
+```
+
+```csharp
+{{~ data.responses :r}}
+{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}string {{=p}} = "";
+{{~}}
+if ((int)result.StatusCode == {{=r.status}})
+{
+	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = responseObj.{{=p}};
+	{{~}}
+}
+
 {{~}}
 ```
 
