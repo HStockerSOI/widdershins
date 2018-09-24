@@ -14,55 +14,32 @@ HttpClient client = new HttpClient();
 //base url
 string url = "{{=data.url + '?'}}";
 
+{{?data.requiredParameters != 0}}
 //setup query parameters
 var queryString = HttpUtility.ParseQueryString(string.Empty);
 {{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
 //add parameters to base url
 url += queryString.ToString();
-
+{{?}}
 //set up HTTP auth (replace username/password with yours)
 var byteArray = Encoding.ASCII.GetBytes("username:password");
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
 {{? data.method.verb == "post"}}
-
-//Build POST body (you can also load in external json files as a string, this is to build one on the fly)
+//Body Schema
+/*
+{{=data.bodyParameter.exampleValues.json}}
+*/
+//Build JSON body (match above schema)
+//Refer to Anatomy of a REST Call/Request Body to see code on composing a specific JSON structure in C#.
 JObject body = new JObject(
-new JProperty("provider", new JObject(
-    new JProperty("first_name", ""),
-    new JProperty("middle_name", ""),
-    new JProperty("last_name", ""),
-    new JProperty("name_suffix", ""),
-    new JProperty("gender", ""),
-    new JProperty("address1", ""),
-    new JProperty("address2", ""),
-    new JProperty("city", ""),
-    new JProperty("state", ""),
-    new JProperty("zip", ""),
-    new JProperty("zip_extn", ""),
-    new JProperty("phone", ""),
-    new JProperty("fax", ""),
-    new JProperty("email", ""),
-    new JProperty("practice_state", ""),
-    new JProperty("birthdate", ""),
-    new JProperty("ssn", ""),
-    new JProperty("short_ssn", ""),
-    new JProperty("dea", ""),
-    new JProperty("upin", ""),
-    new JProperty("type", ""),
-    new JProperty("tax_id", ""),
-    new JProperty("npi", ""),
-    new JProperty("license_state", ""),
-    new JProperty("license_number", ""))),
-new JProperty("caqh_provider_id", ""),
-new JProperty("po_provider_id", ""),
-new JProperty("last_recredential_date", ""),
-new JProperty("next_recredential_date", ""),
-new JProperty("delegation_flag", ""),
-new JProperty("application_type", ""),
-new JProperty("affiliation_flag", ""),
-new JProperty("organization_id", ""),
-new JProperty("region_id", ""));
+new JProperty("property_1", new JObject(
+    new JProperty("subproperty_1", ""),
+    ...
+    new JProperty("subproperty_n", ""))),
+new JProperty("property_2", ""),
+...
+new JProperty("property_n", ""));
 //Body is taken as an array, even with only one element
 JArray bodyArray = new JArray(body);
 var content = new StringContent(bodyArray.ToString(), Encoding.UTF8, "application/json");
