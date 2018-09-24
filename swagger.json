@@ -27,10 +27,14 @@
       },
       "put": {
         "summary": "Update Roster Request [PUT]",
-        "description": "<introduction>A PO can update one or more providers on the roster by submitting a call to the following URL. At least one of the fields with an asterisk (*) is required to process an Update. See 2.1.2 for the immediate system response.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses></responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
+        "description": "<introduction>A PO can update one or more providers on the roster by submitting a call to the following URL. At least one of the fields with an asterisk (*) is required to process an Update. See 2.1.2 for the immediate system response.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses>Responses</responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
         "responses": {
           "200": {
             "description": "200 response",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/RosterResponse"
+            },
             "x-oad-type": "response"
           }
         },
@@ -40,12 +44,8 @@
             "in": "body",
             "required": true,
             "schema": {
-              "x-oad-type": "array",
-              "type": "array",
-              "items": {
-                "x-oad-type": "reference",
-                "$ref": "#/definitions/RosterUpdate"
-              }
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/RosterUpdateRequest"
             },
             "collectionFormat": "csv",
             "x-oad-type": "parameter"
@@ -64,7 +64,7 @@
             "description": "The Add to Roster Web Service immediately returns a Response JSON that includes a system-generated unique Batch ID for the request. ",
             "schema": {
               "x-oad-type": "reference",
-              "$ref": "#/definitions/AddResponse"
+              "$ref": "#/definitions/RosterResponse"
             },
             "x-oad-type": "response"
           },
@@ -72,7 +72,7 @@
             "description": "If there was an error with the request, a 400 status code will be returned with an object that contains the field \"Message\" with the error.  Please check to make sure your JSON request body is properly formatted.",
             "schema": {
               "x-oad-type": "reference",
-              "$ref": "#/definitions/AddErrorResponse"
+              "$ref": "#/definitions/RosterErrorReponse"
             },
             "x-oad-type": "response"
           },
@@ -80,7 +80,7 @@
             "description": "If your credentials are incorrect or not authorized to access this endpoint, it will return a 401 status code representing an unauthorized response.  Please double check your credentials and the URL to make sure you're calling the correct environment.",
             "schema": {
               "x-oad-type": "reference",
-              "$ref": "#/definitions/AddErrorResponse"
+              "$ref": "#/definitions/RosterErrorReponse"
             },
             "x-oad-type": "response"
           }
@@ -454,6 +454,14 @@
           "x-oad-type": "string",
           "type": "string"
         }
+      }
+    },
+    "RosterUpdateRequest": {
+      "x-oad-type": "array",
+      "type": "array",
+      "items": {
+        "x-oad-type": "reference",
+        "$ref": "#/definitions/RosterUpdate"
       }
     }
   },
