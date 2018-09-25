@@ -12,6 +12,7 @@ import org.apache.http.*;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import javax.json.*;
+import java.io.StringReader;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -58,7 +59,9 @@ try
 
     HttpEntity entity = response.getEntity();
     String responseString = EntityUtils.toString(entity);
-    System.out.println(responseString);
+    JsonReader jsonReader = Json.createReader(new StringReader(responseString));
+    JsonObject responseJson = jsonReader.readObject();
+    jsonReader.close();
 
 } catch (Exception ex)
 {
@@ -69,9 +72,12 @@ try
 {
 	    HttpGet request = new HttpGet(url);
 	    HttpResponse response = client.execute(request);
+
 	    HttpEntity entity = response.getEntity();
-	    String responseString = EntityUtils.toString(entity);
-	    System.out.println(responseString);
+    	String responseString = EntityUtils.toString(entity);
+    	JsonReader jsonReader = Json.createReader(new StringReader(responseString));
+    	JsonObject responseJson = jsonReader.readObject();
+    	jsonReader.close();
 
 } catch (Exception ex)
 {

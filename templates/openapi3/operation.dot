@@ -30,7 +30,28 @@ using Newtonsoft.Json.Linq;
 //base url
 string url = "{{=data.url + '?'}}";
 ```
+```java
+//imports (you will need javax.json and org.apache.httpcomponents)
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.*;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import javax.json.*;
+import java.io.StringReader;
+import java.util.List;
+import java.util.ArrayList;
 
+//base url
+String url = "{{=data.url + '?'}}";
+```
 {{? data.operation.description}}{{= data.operation.description.split("<introduction>")[1].split("</introduction>")[0] }}{{?}}
 
 | Method | URL |
@@ -62,6 +83,16 @@ var queryString = HttpUtility.ParseQueryString(string.Empty);
 url += queryString.ToString();
 {{??}}
 //This request does not require URL parameters
+{{?}}
+```
+
+```java
+{{?data.requiredParameters != 0}}
+List<NameValuePair> params = new ArrayList<NameValuePair>();
+{{~ data.requiredParameters :p:index}}params.add(new BasicNameValuePair("{{=p.name}}", "{{=p.exampleValues.json.replace(/'/g,"")}}"));{{~}}
+url += URLEncodedUtils.format(params, "UTF-8");
+{{??}}
+//This request does not require URL Parameters
 {{?}}
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
@@ -131,5 +162,15 @@ if ((int)result.StatusCode == {{=r.status}})
 
 {{~}}
 ```
-
+```java
+{{~ data.responses :r}}
+{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}String {{=p}} = "";
+{{~}}
+if (response.getStatusLine().getStatusCode() == {{=r.status}})
+{
+	{{~Object.keys(data.api.components.schemas[r.schema.split('[')[1].split(']')[0]]['properties']) :p}}{{=p}} = responseJson.getString("{{=p}}");
+	{{~}}
+}
+{{~}}
+```
 {{? data.operation.description}}{{= data.operation.description.split("<nextSteps>")[1].split("</nextSteps>")[0] }}{{?}}
