@@ -26,20 +26,44 @@ var byteArray = Encoding.ASCII.GetBytes("username:password");
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
 {{? data.method.verb == "post"}}
-/* Body JSON Scheme
-{{=data.bodyParameter.exampleValues.json}}
-*/
-//Build JSON body (match above schema)
-//Refer to Anatomy of a REST Call/Request Body to see code on composing a specific JSON structure in C#.
 
 JObject body = new JObject(
-new JProperty("property_1", new JObject(
-    new JProperty("subproperty_1", ""),
-    ...
-    new JProperty("subproperty_n", ""))),
-new JProperty("property_2", ""),
-...
-new JProperty("property_n", ""));
+new JProperty("provider", new JObject(
+    new JProperty("first_name", ""),
+    new JProperty("middle_name", ""),
+    new JProperty("last_name", ""),
+    new JProperty("name_suffix", ""),
+    new JProperty("gender", ""),
+    new JProperty("address1", ""),
+    new JProperty("address2", ""),
+    new JProperty("city", ""),
+    new JProperty("state", ""),
+    new JProperty("zip", ""),
+    new JProperty("zip_extn", ""),
+    new JProperty("phone", ""),
+    new JProperty("fax", ""),
+    new JProperty("email", ""),
+    new JProperty("practice_state", ""),
+    new JProperty("birthdate", ""),
+    new JProperty("ssn", ""),
+    new JProperty("short_ssn", ""),
+    new JProperty("dea", ""),
+    new JProperty("upin", ""),
+    new JProperty("type", ""),
+    new JProperty("tax_id", ""),
+    new JProperty("npi", ""),
+    new JProperty("license_state", ""),
+    new JProperty("license_number", ""))),
+new JProperty("caqh_provider_id", ""),
+new JProperty("po_provider_id", ""),
+new JProperty("last_recredential_date", ""),
+new JProperty("next_recredential_date", ""),
+new JProperty("delegation_flag", ""),
+new JProperty("application_type", ""),
+new JProperty("affiliation_flag", ""),
+new JProperty("organization_id", ""),
+new JProperty("region_id", ""));
+
 //Body is taken as an array, even with only one element
 JArray bodyArray = new JArray(body);
 var content = new StringContent(bodyArray.ToString(), Encoding.UTF8, "application/json");
@@ -52,6 +76,24 @@ var result = client.{{=data.methodCamel}}Async(url, content).Result;
 //Send the GET Request
 var result = client.{{=data.methodCamel}}Async(url).Result;
 
+{{?? data.method.verb == "put"}}
+JObject body = new JObject(
+    new JProperty("organization_id", ""),
+    new JProperty("caqh_provider_id", ""),
+    new JProperty("po_provider_id", ""),
+    new JProperty("last_recredential_date", ""),
+    new JProperty("next_recredential_date", ""),
+    new JProperty("delegation_flag", ""),
+    new JProperty("application_type", ""),
+    new JProperty("affiliation_flag", ""));
+
+//Body is taken as an array, even with only one element
+JArray bodyArray = new JArray(body);
+var content = new StringContent(bodyArray.ToString(), Encoding.UTF8, "application/json");
+content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+//Send the PUT Request
+var result = client.PutAsync(url, content).Result;
 {{?}}
 
 //get the response message and parse it
