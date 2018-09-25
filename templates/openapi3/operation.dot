@@ -7,7 +7,7 @@
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper+data.methodUpper}}-getting-started">Getting Started</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-getting-started">Getting Started</h2>
 
 ```python
 from requests import {{=data.method.verb}}

@@ -47,7 +47,14 @@
               "x-oad-type": "reference",
               "$ref": "#/definitions/RosterUpdateRequest"
             },
-            "collectionFormat": "csv",
+            "x-oad-type": "parameter"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "Product should be either PV or DA for ProView or DirectAssure.",
+            "required": true,
+            "type": "string",
             "x-oad-type": "parameter"
           }
         ]
@@ -89,7 +96,7 @@
           {
             "name": "product",
             "in": "query",
-            "description": "The status endpoint will take the Product of `PV`.",
+            "description": "The status endpoint will take the Product of `PV` or `DA`, depending on if you are on ProView or DirectAssure.",
             "required": true,
             "type": "string",
             "enum": [
@@ -106,6 +113,40 @@
               "x-oad-type": "reference",
               "$ref": "#/definitions/AddRequest"
             },
+            "x-oad-type": "parameter"
+          }
+        ]
+      },
+      "x-oad-type": "operation"
+    },
+    "/Deroster": {
+      "post": {
+        "operationId": "delreq",
+        "summary": "Roster Delete Request [DELETE]",
+        "description": "<introduction>A PO can delete one or more providers from the roster by submitting a call to the following URL.</introduction>\n\n<definition></definition>\n\n<responses>\nBatch Id\n</responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
+        "responses": {
+          "200": {
+            "description": "200 Response returns a batch ID.",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/RosterResponse"
+            },
+            "x-oad-type": "response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "product",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-oad-type": "parameter"
+          },
+          {
+            "name": "Body",
+            "in": "path",
+            "required": true,
+            "type": "string",
             "x-oad-type": "parameter"
           }
         ]
@@ -308,7 +349,7 @@
         "npi"
       ]
     },
-    "AddRequest": {
+    "ProviderRequest": {
       "x-oad-type": "array",
       "type": "array",
       "title": "Roster Insert Request",
@@ -462,6 +503,29 @@
       "items": {
         "x-oad-type": "reference",
         "$ref": "#/definitions/RosterUpdate"
+      }
+    },
+    "RosterDelete": {
+      "x-oad-type": "object",
+      "type": "object",
+      "title": "Delete Request",
+      "properties": {
+        "organization_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "caqh_provider_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    },
+    "RosterDeleteRequest": {
+      "x-oad-type": "array",
+      "type": "array",
+      "items": {
+        "x-oad-type": "reference",
+        "$ref": "#/definitions/RosterDelete"
       }
     }
   },
