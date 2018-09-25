@@ -26,8 +26,7 @@ var byteArray = Encoding.ASCII.GetBytes("username:password");
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
 {{? data.method.verb == "post"}}
-//Body Schema
-/*
+/* Body JSON Scheme
 {{=data.bodyParameter.exampleValues.json}}
 */
 //Build JSON body (match above schema)

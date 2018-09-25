@@ -54,10 +54,15 @@ params = {
 ```
 
 ```csharp
+{{?data.requiredParameters != 0}}
 //setup query parameters
 var queryString = HttpUtility.ParseQueryString(string.Empty);
 {{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
+//add parameters to base url
 url += queryString.ToString();
+{{??}}
+//This request does not require URL parameters
+{{?}}
 ```
 <h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
 
