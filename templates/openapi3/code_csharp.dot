@@ -17,7 +17,7 @@ string url = "{{=data.url + '?'}}";
 {{?data.requiredParameters != 0}}
 //setup query parameters
 var queryString = HttpUtility.ParseQueryString(string.Empty);
-{{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}{{~}}";
+{{~ data.requiredParameters :p:index}}queryString["{{=p.name}}"] = "{{=p.exampleValues.json.replace(/'/g,"")}}";{{~}}
 //add parameters to base url
 url += queryString.ToString();
 {{?}}
@@ -26,12 +26,12 @@ var byteArray = Encoding.ASCII.GetBytes("username:password");
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
 {{? data.method.verb == "post"}}
-//Body Schema
-/*
+/* Body JSON Scheme
 {{=data.bodyParameter.exampleValues.json}}
 */
 //Build JSON body (match above schema)
 //Refer to Anatomy of a REST Call/Request Body to see code on composing a specific JSON structure in C#.
+
 JObject body = new JObject(
 new JProperty("property_1", new JObject(
     new JProperty("subproperty_1", ""),

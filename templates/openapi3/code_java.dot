@@ -1,13 +1,86 @@
-URL obj = new URL("{{=data.url}}{{=data.requiredQueryString}}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("{{=data.methodUpper}}");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
+//imports (you will need javax.json and org.apache.httpcomponents)
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.*;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import javax.json.*;
+import java.io.StringReader;
+import java.util.List;
+import java.util.ArrayList;
+
+{{ data.methodCamel = data.method.verb.charAt(0).toUpperCase() + data.method.verb.slice(1); }}
+
+String url = "{{=data.url + '?'}}";
+{{?data.requiredParameters != 0}}
+List<NameValuePair> params = new ArrayList<NameValuePair>();
+{{~ data.requiredParameters :p:index}}params.add(new BasicNameValuePair("{{=p.name}}", "{{=p.exampleValues.json.replace(/'/g,"")}}"));{{~}}
+url += URLEncodedUtils.format(params, "UTF-8");
+{{?}}
+
+//setup HTTP Auth
+CredentialsProvider provider = new BasicCredentialsProvider();
+UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("username", "password");
+provider.setCredentials(AuthScope.ANY, credentials);
+
+HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+
+{{? data.method.verb == "post"}}
+/* Body JSON Schema
+{{=data.bodyParameter.exampleValues.json}}
+*/
+//build JSON body (match schema above)
+//Refer to Anatomy of a REST Call/Request Body to see code on composing a specific JSON structure in Java.
+JsonArray body = Json.createArrayBuilder()
+	.add(Json.createObjectBuilder()
+	.add("property_1", Json.createObjectBuilder()
+	    .add("subproperty_1", "")
+	    ...
+	    .add("subproperty_n", ""))
+	.add("property_2", "")
+	...
+	.add("property_n", ""))
+	.build();
+
+try
+{
+    HttpPost request = new HttpPost(url);
+    StringEntity bodyParams = new StringEntity(body.toString());
+    request.addHeader("content-type", "application/json");
+    request.setEntity(bodyParams);
+    HttpResponse response = client.execute(request);
+
+    HttpEntity entity = response.getEntity();
+    String responseString = EntityUtils.toString(entity);
+    JsonReader jsonReader = Json.createReader(new StringReader(responseString));
+    JsonObject responseJson = jsonReader.readObject();
+    jsonReader.close();
+
+} catch (Exception ex)
+{
+    //handle errors here
 }
-in.close();
-System.out.println(response.toString());
+{{?? data.method.verb == "get"}}
+try
+{
+	    HttpGet request = new HttpGet(url);
+	    HttpResponse response = client.execute(request);
+
+	    HttpEntity entity = response.getEntity();
+    	String responseString = EntityUtils.toString(entity);
+    	JsonReader jsonReader = Json.createReader(new StringReader(responseString));
+    	JsonObject responseJson = jsonReader.readObject();
+    	jsonReader.close();
+
+} catch (Exception ex)
+{
+	    //handle errors here
+}
+{{?}}
