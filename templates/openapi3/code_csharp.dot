@@ -27,6 +27,8 @@ client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basi
 
 {{? data.method.verb == "post"}}
 
+{{=data.bodyParameter.exampleValues.object}}
+
 JObject body = new JObject(
 new JProperty("provider", new JObject(
     new JProperty("first_name", ""),
@@ -100,3 +102,43 @@ var result = client.PutAsync(url, content).Result;
 string resultTxt = result.Content.ReadAsStringAsync().Result;
 dynamic responseObj = JsonConvert.DeserializeObject<dynamic>(resultTxt);
 Console.WriteLine(responseObj.ToString());
+{{##def.buildCSharpJson = function(jsonObj, lvl = 0)
+{
+    var lvlString = "";
+    for (var prop in jsonObj)
+    {   
+        if (jsonObj.hasOwnProperty(prop))
+        {
+            if (jsonObj[prop] && typeof jsonObj[prop] == "object")
+            {
+                //add parent property
+                lvlString += "new JProperty(\"" + prop + "\", new JObject(\n";
+                //traverse children
+                lvlString += buildJson(jsonObj[prop], lvl + 1);
+            } else {
+                //no children
+                lvlString += "new JProperty(\"" + prop + "\", \"" + lvl + "\")"
+                //handle closing parens
+                var keys = Object.keys(jsonObj);
+                //if the propery is last in the list, add closing parens
+                if (keys.indexOf(prop) == keys.length - 1)
+                {
+                    //add a second paren if we are a sub-property
+                    //otherwise, it is the last property in level 0, so add semicolon
+                    lvlString += ")";
+                    if (lvl > 0)
+                        lvlString += ")";
+                    else
+                    {
+                        lvlString += ";";
+                        return "JObject body = new JObject(\n" + lvlString;
+                    }
+                }
+                //b/c we return if the string is fully generated, safe to unconditionally add ,\n here
+                lvlString += ",\n";
+            }
+        }
+    }
+    return lvlString;
+}
+#}}
