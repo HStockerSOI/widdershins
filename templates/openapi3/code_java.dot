@@ -83,4 +83,24 @@ try
 {
 	    //handle errors here
 }
+{{?? data.method.verb == "put"}}
+//body setup coming
+try
+{
+    HttpPut request = new HttpPut(url);
+    StringEntity bodyParams = new StringEntity(body.toString());
+    request.addHeader("content-type", "application/json");
+    request.setEntity(bodyParams);
+    HttpResponse response = client.execute(request);
+
+    HttpEntity entity = response.getEntity();
+    String responseString = EntityUtils.toString(entity);
+    JsonReader jsonReader = Json.createReader(new StringReader(responseString));
+    JsonObject responseJson = jsonReader.readObject();
+    jsonReader.close();
+
+} catch (Exception ex)
+{
+    //handle errors here
+}
 {{?}}
