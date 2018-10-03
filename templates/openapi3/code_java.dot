@@ -139,3 +139,46 @@ try
     //handle errors here
 }
 {{?}}
+
+{{##def.buildJavaJson = function(jsonObj, lvl = 1)
+{
+    var lvlString = "";
+    for (var prop in jsonObj)
+    {   
+        if (jsonObj.hasOwnProperty(prop))
+        {
+            if (jsonObj[prop] && typeof jsonObj[prop] == "object" && !Array.isArray(jsonObj[prop]))
+            {
+                //add parent property
+                lvlString += ".add(\"" + prop + "\", Json.createObjectBuilder()\n";
+                //traverse children
+                lvlString += buildJavaJson(jsonObj[prop]);
+                lvlString += ")\n";
+            } else if (jsonObj[prop] && typeof jsonObj[prop] == "object" && Array.isArray(jsonObj[prop])) {
+                lvlString += ".add(\"" + prop + "\", Json.createArrayBuilder()\n";
+                for (var i in jsonObj[prop])
+                {
+                    if (typeof jsonObj[prop][i] == "object") {
+                        lvlString += ".add(Json.createObjectBuilder()\n";
+                        lvlString += buildJavaJson(jsonObj[prop][i]);
+                        lvlString += ")\n";
+                    } else
+                        lvlString += ".add(\"" + jsonObj[prop][i] + "\")";
+                }
+                lvlString += ")\n";
+            } else {
+                //no children
+                lvlString += ".add(\"" + prop + "\", \"\")";
+                lvlString += "\n";
+            }
+        }
+    }
+    return lvlString;
+}
+#}}
+
+{{##def.getJavaJson = function(jsonObj)
+{
+    return "JsonArray body = Json.createArrayBuilder().add(Json.createObjectBuilder()\n" + buildJavaJson(jsonObj) + ")\n.build();";
+}
+#}}

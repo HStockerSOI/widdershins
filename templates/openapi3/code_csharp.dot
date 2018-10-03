@@ -100,43 +100,64 @@ var result = client.PutAsync(url, content).Result;
 string resultTxt = result.Content.ReadAsStringAsync().Result;
 dynamic responseObj = JsonConvert.DeserializeObject<dynamic>(resultTxt);
 Console.WriteLine(responseObj.ToString());
-{{##def.buildCSharpJson = function(jsonObj, lvl = 0)
+
+
+{{##def.buildCSharpJson = function(jsonObj)
 {
     var lvlString = "";
     for (var prop in jsonObj)
     {   
         if (jsonObj.hasOwnProperty(prop))
         {
-            if (jsonObj[prop] && typeof jsonObj[prop] == "object")
+            if (jsonObj[prop] && typeof jsonObj[prop] == "object" && !Array.isArray(jsonObj[prop]))
             {
                 //add parent property
                 lvlString += "new JProperty(\"" + prop + "\", new JObject(\n";
                 //traverse children
-                lvlString += buildJson(jsonObj[prop], lvl + 1);
+                lvlString += buildCSharpJson(jsonObj[prop]);
+                lvlString += ")),\n";
+            } else if (jsonObj[prop] && typeof jsonObj[prop] == "object" && Array.isArray(jsonObj[prop])) {
+            	lvlString += "new JProperty(\"" + prop + "\", new JArray(\n";
+            	for (var i in jsonObj[prop])
+            	{
+            		if (typeof jsonObj[prop][i] == "object"){
+            			lvlString += "new JObject(\n";
+            			lvlString += buildCSharpJson(jsonObj[prop][i]);
+            			lvlString += ")";
+            		}
+            		else
+            			lvlString += "\"" + jsonObj[prop][i] + "\"";
+            		//check for needed comma
+            		if (jsonObj[prop].length - 1 != i)
+            			lvlString += ",";
+            		lvlString += "\n";
+            	}
+            	lvlString += "))";
+            	//check if this is the last propery of this level (to see if comma is needed)
+            	var keys = Object.keys(jsonObj);
+            	if (keys.indexOf(prop) != keys.length - 1)
+            		lvlString += ",";
+            	lvlString += "\n";
             } else {
                 //no children
-                lvlString += "new JProperty(\"" + prop + "\", \"" + lvl + "\")"
-                //handle closing parens
+                lvlString += "new JProperty(\"" + prop + "\", \"\")";
+                //last property does not need comma
                 var keys = Object.keys(jsonObj);
-                //if the propery is last in the list, add closing parens
-                if (keys.indexOf(prop) == keys.length - 1)
+                if (keys.indexOf(prop) != keys.length - 1)
                 {
-                    //add a second paren if we are a sub-property
-                    //otherwise, it is the last property in level 0, so add semicolon
-                    lvlString += ")";
-                    if (lvl > 0)
-                        lvlString += ")";
-                    else
-                    {
-                        lvlString += ";";
-                        return "JObject body = new JObject(\n" + lvlString;
-                    }
+                	lvlString += ",";
                 }
-                //b/c we return if the string is fully generated, safe to unconditionally add ,\n here
-                lvlString += ",\n";
+                lvlString += "\n";
             }
         }
     }
     return lvlString;
 }
+#}}
+
+{{##def.getCSharpJson = function(jsonObj)
+{
+    return "JObject body = new JObject(\n" + def.buildCSharpJson(jsonObj) + ");";
+}
+
 #}}
