@@ -15,7 +15,7 @@
 {{ data.operationUniqueSlug = data.method.slug; }}
 {{ data.operation = data.method.operation; }}
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
-<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-') + data.methodUpper + "intro"}}">{{=data.operation.summary}}</h1>
+<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-') + data.methodUpper + "intro"}}"> - {{=data.operation.summary}}</h1>
 
 {{= data.templates.operation(data) }}
 {{ } /* of methods */ }}

@@ -1,6 +1,6 @@
 {
   "paths": {
-    "/Roster": {
+    "/RosterAPI/API/Roster": {
       "get": {
         "summary": "Get Roster Result [GET]",
         "description": "<introduction>A PO can request the status and results of a previous Add to Roster, Update on Roster, or Delete from Roster request by submitting the system-generated Batch ID in the following URL.</introduction>\n\n<definition>The Roster Operation Result will take a `batch_id` in its parameters.  This batch id will have been returned to you by a successful `POST`, `PUT` or `DELETE`.  A `GET` call cannot have a request body.</definition>\n\n<responses>\n### Update Response\n\n### Add Response\n\n### Delete Response\n</responses>\n\n<nextSteps>\n### See also:\n\n* [Update Roster](#todo)\n* [Delete Roster](#todo)\n* [Roster Quick Add](#todo)</nextSteps>",
@@ -138,6 +138,7 @@
           {
             "name": "product",
             "in": "query",
+            "description": "The status endpoint will take the Product of `PV` or `DA`, depending on if you are on ProView or DirectAssure.",
             "required": true,
             "type": "string",
             "x-oad-type": "parameter"
@@ -545,7 +546,7 @@
     "version": "2.1"
   },
   "host": "proview-demo.caqh.org",
-  "basePath": "/RosterAPI/api",
+  "basePath": "/",
   "schemes": [
     "https"
   ],

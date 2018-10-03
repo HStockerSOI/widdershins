@@ -7,7 +7,7 @@
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-getting-started">Getting Started</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-getting-started">Getting Started</h2>
 
 ```python
 from requests import {{=data.method.verb}}
@@ -59,7 +59,7 @@ String url = "{{=data.url + '?'}}";
 |{{=data.methodUpper }} | {{=data.url }} |
 
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data">Staging The Data</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-staging-data">Staging The Data</h2>
 
 > Create parameters object
 
@@ -95,20 +95,20 @@ url += URLEncodedUtils.format(params, "UTF-8");
 //This request does not require URL Parameters
 {{?}}
 ```
-<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
+<h3 id="{{=data.title_prefix.replace(/\//g,"-")+data.method.path.replace(/\//g,"-")+data.methodUpper}}-staging-data-parameter">Parameters</h3>
 
 {{~ data.parameters :p:pindex}}{{?p.in == "query"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}  The data should be passed in to the [parameters](#query-parameters) of the request.
 
 {{?data.bodyParameter.exampleValues.json}}
-<h3 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-staging-data-body">Body</h3>
+<h3 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-staging-data-body">Body</h3>
 
 {{~ data.parameters :p:pindex}}{{?p.in == "body"}}{{?p.description}}  {{=p.description}}{{?}}{{?}}{{~}}    The data should be passed in to the [request body](#request-body) of the request.{{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-api-definition"> {{=data.methodUpper}} {{=data.method.path}}</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-api-definition"> {{=data.methodUpper}} {{=data.method.path}}</h2>
 
 {{? data.operation.description}}{{= data.operation.description.split("<definition>")[1].split("</definition>")[0] }}{{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-making-request">Making The Request</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-making-request">Making The Request</h2>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
 > Full API Request
@@ -123,7 +123,7 @@ url += URLEncodedUtils.format(params, "UTF-8");
 {{#def.parameters}}
 {{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-responses">Responses</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-responses">Responses</h2>
 
 {{#def.responses}}
 
@@ -136,7 +136,7 @@ url += URLEncodedUtils.format(params, "UTF-8");
 {{#def.authentication_none}}
 {{?}}
 
-<h2 id="{{=data.title_prefix+data.method.path.replace("/","-")+data.methodUpper}}-next-step">Next Steps</h2>
+<h2 id="{{=data.title_prefix+data.method.path.replace(/\//g,"-")+data.methodUpper}}-next-step">Next Steps</h2>
 
 > Parsing the response
 

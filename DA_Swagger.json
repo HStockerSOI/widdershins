@@ -1,0 +1,369 @@
+{
+  "paths": {
+    "/POPracticeLocation/Intake": {
+      "post": {
+        "summary": "Practice Location Upload [POST]",
+        "description": "<introduction>Participating Organizations are required to submit all their providers practice location data in the JSON format, every time.  The schema for the JSON format is listed below. JSON is a lightweight and simple way to represent machine-readable data. If there is not associated JSON data for a field, then it must be represented correctly based on the data type. Absence of an entire array should be represented by an empty array ‘[]’.  Data elements that are marked Required (R) or Conditional (C) in the object tables are marked as such for the data processing logic to be successful.  If you choose not to include some of these data elements it will result in exceptions being generated and in some cases, will bypass processing the entire record.</introduction>\n\n<definition>Participating Organizations can submit their DirectAssure 2.0 Practice Location files to CAQH through an API.  The data submitted to the API must be in JSON format in the layout that is described in the section below. Participating organizations can submit multiple practice locations and its corresponding providers in one file. \n\nThe layout of the file is TIN-centric. <b>The input file service can be up to 2GB in size.</b> If an input file is larger than 2 GB, then the request can be split into many API calls, but with the same Batch ID. The end-of-file parameter identifies if a file is split into many parts. The BatchID should be the same for all calls to the API for a multi-part file. CAQH will merge the multi-part file once all the parts are received and begin processing the file. The API call will send an HTTP response of 200 when the submission is successful. The input file will be processed as soon as it is received. The status of the file can be checked using the status API by passing the batch ID of the submission. The status will return ‘Queued’, ‘In Process’ or ‘Complete’. </definition>\n\n<responses> </responses>\n\n<nextSteps> </nextSteps>",
+        "responses": {
+          "200": {
+            "description": "Intake File has been successfully submitted. Submission_Batch_ID = <SubmissionBatchID>",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "401": {
+            "description": "{\"error\":\"Authentication failed.\"}",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "402": {
+            "description": "{\"error\":\"File too big to process. Please try again with a smaller file size.\"}",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "420": {
+            "description": "Invalid BatchID format. \nFormat is POID_YYYYMMDD_HHMMSS  (POID is the 3 digit organization ID assigned to the participating organization by CAQH)\n",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "421": {
+            "description": "The encoded username and password does not match the Organization ID credentials.",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "422": {
+            "description": "An ‘End of File’ indicator was already received (eof=true) for the submitted BatchID. Please submit a new file using a new BatchID. ",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "500": {
+            "description": "{\"error\":\"Internal error occurred.  Please try again later.\"}",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-oad-type": "response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "batchid",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "x-oad-type": "parameter"
+          },
+          {
+            "name": "eof",
+            "in": "query",
+            "required": true,
+            "type": "boolean",
+            "x-oad-type": "parameter"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/Practice Location Request"
+            },
+            "x-oad-type": "parameter"
+          }
+        ]
+      },
+      "x-oad-type": "operation"
+    },
+    "/POPracticeLocation/{SubmissionBatchID}": {
+      "get": {
+        "summary": "Upload Status Check [GET]",
+        "description": "<introduction>Participating Organizations can use this service to view the status of Practice Location Submission file processing.</introduction>\n\n<definition> </definition>\n\n<responses> </responses>\n\n<nextSteps> </nextSteps>",
+        "responses": {
+          "200": {
+            "description": "\"Queued\" \n (Processing has not begun for the batch)\n",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "x-oad-type": "response"
+          },
+          "201": {
+            "description": "\"In_Process\" \n(Batch is still in process)\n",
+            "schema": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "x-oad-type": "response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "SubmissionBatchID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-oad-type": "parameter"
+          }
+        ]
+      },
+      "x-oad-type": "operation"
+    }
+  },
+  "definitions": {
+    "Specialty": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "specialty_name": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "specialty_taxonomy_code": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "specialty_type": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    },
+    "License": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "license_number": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "license_state": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "license_expiration_date": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    },
+    "DEA": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "dea_number": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "dea_state": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    },
+    "Provider": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "caqh_provider_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "po_provider_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_type": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_primary_practice_state": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_first_name": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_middle_name": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_last_name": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "npi_type_1": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "po_provider_location_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "provider_dea": {
+          "x-oad-type": "array",
+          "type": "array",
+          "items": {
+            "x-oad-type": "reference",
+            "$ref": "#/definitions/DEA"
+          }
+        },
+        "provider_license": {
+          "x-oad-type": "array",
+          "type": "array",
+          "items": {
+            "x-oad-type": "array",
+            "type": "array",
+            "items": {
+              "x-oad-type": "reference",
+              "$ref": "#/definitions/License"
+            }
+          }
+        },
+        "provider_practice_specialty": {
+          "x-oad-type": "array",
+          "type": "array",
+          "items": {
+            "x-oad-type": "reference",
+            "$ref": "#/definitions/Specialty"
+          }
+        }
+      }
+    },
+    "Practice Location": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "tax_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_name": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_address1": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_address2": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_city": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_state": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_zipcode": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_province": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location_country": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "npi_type_2": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "po_location_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "location_type": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "providers": {
+          "x-oad-type": "array",
+          "type": "array",
+          "items": {
+            "x-oad-type": "reference",
+            "$ref": "#/definitions/Provider"
+          }
+        }
+      }
+    },
+    "Practice Location Request": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "x-oad-type": "string",
+          "type": "string"
+        },
+        "practice_location": {
+          "x-oad-type": "array",
+          "type": "array",
+          "items": {
+            "x-oad-type": "reference",
+            "$ref": "#/definitions/Practice Location"
+          }
+        }
+      }
+    },
+    "SuccessResponse": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "message": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "x-oad-type": "object",
+      "type": "object",
+      "properties": {
+        "error": {
+          "x-oad-type": "string",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "Direct Assure",
+    "version": "1.0"
+  },
+  "host": "directassure.caqh.org",
+  "basePath": "/DirectAssure/api",
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0"
+}
