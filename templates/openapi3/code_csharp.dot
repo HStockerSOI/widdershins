@@ -27,8 +27,6 @@ client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basi
 
 {{? data.method.verb == "post"}}
 
-{{=data.bodyParameter.exampleValues.object}}
-
 JObject body = new JObject(
 new JProperty("provider", new JObject(
     new JProperty("first_name", ""),

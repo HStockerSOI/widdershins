@@ -33,21 +33,44 @@ provider.setCredentials(AuthScope.ANY, credentials);
 HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
 
 {{? data.method.verb == "post"}}
-/* Body JSON Schema
-{{=data.bodyParameter.exampleValues.json}}
-*/
-//build JSON body (match schema above)
-//Refer to Anatomy of a REST Call/Request Body to see code on composing a specific JSON structure in Java.
 JsonArray body = Json.createArrayBuilder()
-	.add(Json.createObjectBuilder()
-	.add("property_1", Json.createObjectBuilder()
-	    .add("subproperty_1", "")
-	    ...
-	    .add("subproperty_n", ""))
-	.add("property_2", "")
-	...
-	.add("property_n", ""))
-	.build();
+    .add(Json.createObjectBuilder()
+        .add("provider", Json.createObjectBuilder()
+            .add("first_name", "")
+            .add("middle_name", "")
+            .add("last_name", "")
+            .add("name_suffix", "")
+            .add("gender", "")
+            .add("address1", "")
+            .add("address2", "")
+            .add("city", "")
+            .add("state", "")
+            .add("zip", "")
+            .add("zip_extn", "")
+            .add("phone", "")
+            .add("fax", "")
+            .add("email", "")
+            .add("practice_state", "")
+            .add("birthdate", "")
+            .add("ssn", "")
+            .add("short_ssn", "")
+            .add("dea", "")
+            .add("upin", "")
+            .add("type", "")
+            .add("tax_id", "")
+            .add("npi", "")
+            .add("license_state", "")
+            .add("license_number", ""))
+        .add("caqh_provider_id", "")
+        .add("po_provider_id", "")
+        .add("last_recredential_date", "")
+        .add("next_recredential_date", "")
+        .add("delegation_flag", "")
+        .add("application_type", "")
+        .add("affiliation_flag", "")
+        .add("organization_id", "")
+        .add("region_id", ""))
+    .build();
 
 try
 {
@@ -84,7 +107,19 @@ try
 	    //handle errors here
 }
 {{?? data.method.verb == "put"}}
-//body setup coming
+
+JsonArray body = Json.createArrayBuilder()
+    .add(Json.createObjectBuilder()
+        .add("organization_id", "")
+        .add("caqh_provider_id", "")
+        .add("po_provider_id", "")
+        .add("last_recredential_date", "")
+        .add("next_recredential_date", "")
+        .add("delegation_flag", "")
+        .add("application_type", "")
+        .add("affiliation_flag", ""))
+    .build();
+
 try
 {
     HttpPut request = new HttpPut(url);
